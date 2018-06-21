@@ -8,11 +8,16 @@ import Html.Events exposing (..)
 main : Program Never Model Msg
 main =
     program
-        { init = initModel
+        { init = init
         , update = update
         , view = view
-        , subscription = \_ -> Sub.none
+        , subscriptions = \_ -> Sub.none
         }
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( initModel, Cmd.none )
 
 
 
@@ -70,3 +75,10 @@ update msg model =
 
         UpdatePage ->
             ( { model | view = QuestionPage }, Cmd.none )
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ h1 [] [ text "Hello ElmQuiz" ]
+        ]
