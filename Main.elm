@@ -22,12 +22,12 @@ main =
 type alias Model =
     { score : Int
     , username : String
-    , view : Pages
+    , view : Page
     , quizData : List ApiResponse
     }
 
 
-type Pages
+type Page
     = StartPage
     | QuestionPage
     | GameOverPage
@@ -40,6 +40,12 @@ type alias ApiResponse =
     }
 
 
+type Msg
+    = Username String
+    | Score Int
+    | UpdatePage
+
+
 initModel : Model
 initModel =
     { score = 0
@@ -47,3 +53,20 @@ initModel =
     , view = StartPage
     , quizData = []
     }
+
+
+
+-- UPDATE
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        Username username ->
+            ( { model | username = username }, Cmd.none )
+
+        Score score ->
+            ( { model | score = score }, Cmd.none )
+
+        UpdatePage ->
+            ( { model | view = QuestionPage }, Cmd.none )
