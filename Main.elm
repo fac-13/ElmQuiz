@@ -3,6 +3,8 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Http exposing (..)
+import Json.Decode as Json
 
 
 main : Program Never Model Msg
@@ -49,6 +51,8 @@ type Msg
     = Username String
     | Score Int
     | UpdatePage
+    | GetApiData
+    | ApiResponse
 
 
 initModel : Model
@@ -76,6 +80,18 @@ update msg model =
         UpdatePage ->
             ( { model | view = QuestionPage }, Cmd.none )
 
+        GetApiData ->
+            ( model, sendHttpRequest )
+
+
+sendHttpRequest =
+    Http.send ApiResponse <| getRequest
+
+
+getRequest =
+    Http.get "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
+        apiDecoder
+
 
 
 -- function to switch between pages
@@ -89,7 +105,7 @@ changePage model =
                 [ input [ placeholder "Enter your name", onInput Username ]
                     []
                 , button
-                    []
+                    [ onClick GetApiData ]
                     [ text "Play" ]
                 ]
 
