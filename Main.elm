@@ -28,7 +28,7 @@ type alias Model =
     { score : Int
     , username : String
     , view : Page
-    , quizData : List ApiResponse
+    , quizData : List QuizData
     }
 
 
@@ -38,7 +38,7 @@ type Page
     | GameOverPage
 
 
-type alias ApiResponse =
+type alias QuizData =
     { question : String
     , correct_answer : String
     , options : List String
