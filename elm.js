@@ -12420,7 +12420,7 @@ var _user$project$Main$Model = F4(
 	function (a, b, c, d) {
 		return {score: a, username: b, view: c, quizData: d};
 	});
-var _user$project$Main$ApiResponse = F3(
+var _user$project$Main$QuizData = F3(
 	function (a, b, c) {
 		return {question: a, correct_answer: b, options: c};
 	});
