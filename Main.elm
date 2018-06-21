@@ -52,7 +52,7 @@ type Msg
     | Score Int
     | UpdatePage
     | GetApiData
-    | ApiResponse
+    | ApiResponse (Result Http.Error QuizData)
 
 
 initModel : Model
@@ -83,6 +83,13 @@ update msg model =
         GetApiData ->
             ( model, sendHttpRequest )
 
+        ApiResponse (Ok quizData) ->
+            let
+                log =
+                    Debug.log "Quiz api data: " quizData
+            in
+                ( { model | quizData = quizData }, Cmd.none )
+
 
 sendHttpRequest =
     Http.send ApiResponse <| getRequest
@@ -91,6 +98,14 @@ sendHttpRequest =
 getRequest =
     Http.get "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
         apiDecoder
+
+
+apiDecoder : Json.Decoder QuizData
+apiDecoder =
+    Json.map3 QuizData
+        (Json.at [ "results", "question" ] Json.string)
+        (Json.at [ "results", "correct_answer" ] Json.string)
+        (Json.at [ "results", "incorrect_answers" ] (Json.list Json.string))
 
 
 
@@ -127,7 +142,7 @@ changePage model =
 view : Model -> Html Msg
 view model =
     div []
-        [ header []
+        [ Html.header []
             [ h1 [] [ text "ElmQuiz" ]
             ]
         , (changePage model)
