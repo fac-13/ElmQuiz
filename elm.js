@@ -12416,9 +12416,64 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {score: a, username: b, view: c, quizData: d};
+	});
+var _user$project$Main$ApiResponse = F3(
+	function (a, b, c) {
+		return {question: a, correct_answer: b, options: c};
+	});
+var _user$project$Main$GameOverPage = {ctor: 'GameOverPage'};
+var _user$project$Main$QuestionPage = {ctor: 'QuestionPage'};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'Username':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{username: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Score':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{score: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{view: _user$project$Main$QuestionPage}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Main$StartPage = {ctor: 'StartPage'};
+var _user$project$Main$initModel = {
+	score: 0,
+	username: '',
+	view: _user$project$Main$StartPage,
+	quizData: {ctor: '[]'}
+};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$UpdatePage = {ctor: 'UpdatePage'};
+var _user$project$Main$Score = function (a) {
+	return {ctor: 'Score', _0: a};
+};
+var _user$project$Main$Username = function (a) {
+	return {ctor: 'Username', _0: a};
+};
 var _user$project$Main$changePage = function (model) {
-	var _p0 = model.view;
-	switch (_p0.ctor) {
+	var _p1 = model.view;
+	switch (_p1.ctor) {
 		case 'StartPage':
 			return A2(
 				_elm_lang$html$Html$section,
@@ -12430,7 +12485,11 @@ var _user$project$Main$changePage = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$placeholder('Enter your name'),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$Username),
+								_1: {ctor: '[]'}
+							}
 						},
 						{ctor: '[]'}),
 					_1: {
@@ -12508,54 +12567,6 @@ var _user$project$Main$view = function (model) {
 			}
 		});
 };
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {score: a, username: b, view: c, quizData: d};
-	});
-var _user$project$Main$ApiResponse = F3(
-	function (a, b, c) {
-		return {question: a, correct_answer: b, options: c};
-	});
-var _user$project$Main$GameOverPage = {ctor: 'GameOverPage'};
-var _user$project$Main$QuestionPage = {ctor: 'QuestionPage'};
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
-			case 'Username':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{username: _p1._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Score':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{score: _p1._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{view: _user$project$Main$QuestionPage}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-var _user$project$Main$StartPage = {ctor: 'StartPage'};
-var _user$project$Main$initModel = {
-	score: 0,
-	username: '',
-	view: _user$project$Main$StartPage,
-	quizData: {ctor: '[]'}
-};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$Main$init,
@@ -12565,13 +12576,6 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
-var _user$project$Main$UpdatePage = {ctor: 'UpdatePage'};
-var _user$project$Main$Score = function (a) {
-	return {ctor: 'Score', _0: a};
-};
-var _user$project$Main$Username = function (a) {
-	return {ctor: 'Username', _0: a};
-};
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};

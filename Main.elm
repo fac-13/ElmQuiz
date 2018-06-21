@@ -86,7 +86,7 @@ changePage model =
     case model.view of
         StartPage ->
             section []
-                [ input [ placeholder "Enter your name" ]
+                [ input [ placeholder "Enter your name", onInput Username ]
                     []
                 , button
                     []
