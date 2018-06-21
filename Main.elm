@@ -40,6 +40,11 @@ type alias ApiResponse =
     }
 
 
+type Msg
+    = Username String
+    | Score Int
+
+
 initModel : Model
 initModel =
     { score = 0
