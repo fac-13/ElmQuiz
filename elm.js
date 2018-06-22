@@ -13007,41 +13007,37 @@ var _user$project$Main$apiDecoder = A4(
 		_elm_lang$core$Json_Decode$at,
 		{
 			ctor: '::',
-			_0: 'results',
-			_1: {
-				ctor: '::',
-				_0: 'question',
-				_1: {ctor: '[]'}
-			}
+			_0: 'question',
+			_1: {ctor: '[]'}
 		},
 		_elm_lang$core$Json_Decode$string),
 	A2(
 		_elm_lang$core$Json_Decode$at,
 		{
 			ctor: '::',
-			_0: 'results',
-			_1: {
-				ctor: '::',
-				_0: 'correct_answer',
-				_1: {ctor: '[]'}
-			}
+			_0: 'correct_answer',
+			_1: {ctor: '[]'}
 		},
 		_elm_lang$core$Json_Decode$string),
 	A2(
 		_elm_lang$core$Json_Decode$at,
 		{
 			ctor: '::',
-			_0: 'results',
-			_1: {
-				ctor: '::',
-				_0: 'incorrect_answers',
-				_1: {ctor: '[]'}
-			}
+			_0: 'incorrect_answers',
+			_1: {ctor: '[]'}
 		},
 		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+var _user$project$Main$apiDecodeList = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'results',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$list(_user$project$Main$apiDecoder));
 var _user$project$Main$getRequest = function () {
 	var url = 'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple';
-	return A2(_elm_lang$http$Http$get, url, _user$project$Main$apiDecoder);
+	return A2(_elm_lang$http$Http$get, url, _user$project$Main$apiDecodeList);
 }();
 var _user$project$Main$GameOverPage = {ctor: 'GameOverPage'};
 var _user$project$Main$QuestionPage = {ctor: 'QuestionPage'};
@@ -13104,9 +13100,7 @@ var _user$project$Main$update = F2(
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{
-								quizData: {ctor: '::', _0: _p1, _1: model.quizData}
-							}),
+							{quizData: _p1}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -13242,7 +13236,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Main.Msg":{"args":[],"tags":{"Score":["Int"],"Username":["String"],"UpdatePage":[],"ApiResponse":["Result.Result Http.Error Main.QuizData"],"GetApiData":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Main.QuizData":{"args":[],"type":"{ question : String , correct_answer : String , incorrect_answers : List String }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Main.Msg":{"args":[],"tags":{"Score":["Int"],"Username":["String"],"UpdatePage":[],"ApiResponse":["Result.Result Http.Error (List Main.QuizData)"],"GetApiData":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Main.QuizData":{"args":[],"type":"{ question : String , correct_answer : String , incorrect_answers : List String }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

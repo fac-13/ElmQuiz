@@ -53,7 +53,7 @@ type Msg
     | Score Int
     | UpdatePage
     | GetApiData
-    | ApiResponse (Result Http.Error QuizData)
+    | ApiResponse (Result Http.Error (List QuizData))
 
 
 initModel : Model
@@ -95,7 +95,7 @@ update msg model =
                 log =
                     Debug.log "Quiz api data: " quizData
             in
-                ( { model | quizData = quizData :: model.quizData }, Cmd.none )
+                ( { model | quizData = quizData }, Cmd.none )
 
         ApiResponse (Err err) ->
             let
@@ -110,21 +110,36 @@ sendHttpRequest =
     Http.send ApiResponse <| getRequest
 
 
-getRequest : Request QuizData
+getRequest : Request (List QuizData)
 getRequest =
     let
         url =
             "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
     in
-        Http.get url apiDecoder
+        Http.get url apiDecodeList
+
+
+
+-- API call returns an object. This function decodes the object accessing the results list
+
+
+apiDecodeList : Json.Decoder (List QuizData)
+apiDecodeList =
+    Json.at [ "results" ] <|
+        Json.list apiDecoder
+
+
+
+-- Decoding the individual quiz Q&As records from the API call, located inside the results list
 
 
 apiDecoder : Json.Decoder QuizData
 apiDecoder =
-    Json.map3 QuizData
-        (Json.at [ "results", "question" ] Json.string)
-        (Json.at [ "results", "correct_answer" ] Json.string)
-        (Json.at [ "results", "incorrect_answers" ] (Json.list Json.string))
+    Json.map3
+        QuizData
+        (Json.at [ "question" ] Json.string)
+        (Json.at [ "correct_answer" ] Json.string)
+        (Json.at [ "incorrect_answers" ] (Json.list Json.string))
 
 
 
