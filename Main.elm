@@ -105,10 +105,12 @@ update msg model =
                 ( { model | error = True }, Cmd.none )
 
 
+sendHttpRequest : Cmd Msg
 sendHttpRequest =
     Http.send ApiResponse <| getRequest
 
 
+getRequest : Request QuizData
 getRequest =
     let
         url =
