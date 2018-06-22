@@ -31,6 +31,7 @@ type alias Model =
     , username : String
     , view : Page
     , quizData : List QuizData
+    , error : Bool
     }
 
 
@@ -43,7 +44,7 @@ type Page
 type alias QuizData =
     { question : String
     , correct_answer : String
-    , options : List String
+    , incorrect_answers : List String
     }
 
 
@@ -60,7 +61,13 @@ initModel =
     { score = 0
     , username = ""
     , view = StartPage
-    , quizData = []
+    , quizData =
+        [ { question = ""
+          , correct_answer = ""
+          , incorrect_answers = []
+          }
+        ]
+    , error = False
     }
 
 
@@ -88,7 +95,14 @@ update msg model =
                 log =
                     Debug.log "Quiz api data: " quizData
             in
-                ( { model | quizData = quizData }, Cmd.none )
+                ( { model | quizData = quizData :: model.quizData }, Cmd.none )
+
+        ApiResponse (Err err) ->
+            let
+                log =
+                    Debug.log "Quiz api error:" err
+            in
+                ( { model | error = True }, Cmd.none )
 
 
 sendHttpRequest =
@@ -96,8 +110,11 @@ sendHttpRequest =
 
 
 getRequest =
-    Http.get "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
-        apiDecoder
+    let
+        url =
+            "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
+    in
+        Http.get url apiDecoder
 
 
 apiDecoder : Json.Decoder QuizData
