@@ -3,6 +3,8 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Http exposing (..)
+import Json.Decode as Json
 
 
 main : Program Never Model Msg
@@ -28,7 +30,8 @@ type alias Model =
     { score : Int
     , username : String
     , view : Page
-    , quizData : List ApiResponse
+    , quizData : List QuizData
+    , error : Bool
     }
 
 
@@ -38,10 +41,10 @@ type Page
     | GameOverPage
 
 
-type alias ApiResponse =
+type alias QuizData =
     { question : String
     , correct_answer : String
-    , options : List String
+    , incorrect_answers : List String
     }
 
 
@@ -49,6 +52,8 @@ type Msg
     = Username String
     | Score Int
     | UpdatePage
+    | GetApiData
+    | ApiResponse (Result Http.Error (List QuizData))
 
 
 initModel : Model
@@ -56,7 +61,13 @@ initModel =
     { score = 0
     , username = ""
     , view = StartPage
-    , quizData = []
+    , quizData =
+        [ { question = ""
+          , correct_answer = ""
+          , incorrect_answers = []
+          }
+        ]
+    , error = False
     }
 
 
@@ -76,6 +87,60 @@ update msg model =
         UpdatePage ->
             ( { model | view = QuestionPage }, Cmd.none )
 
+        GetApiData ->
+            ( model, sendHttpRequest )
+
+        ApiResponse (Ok quizData) ->
+            let
+                log =
+                    Debug.log "Quiz api data: " quizData
+            in
+                ( { model | quizData = quizData }, Cmd.none )
+
+        ApiResponse (Err err) ->
+            let
+                log =
+                    Debug.log "Quiz api error:" err
+            in
+                ( { model | error = True }, Cmd.none )
+
+
+sendHttpRequest : Cmd Msg
+sendHttpRequest =
+    Http.send ApiResponse <| getRequest
+
+
+getRequest : Request (List QuizData)
+getRequest =
+    let
+        url =
+            "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple"
+    in
+        Http.get url apiDecodeList
+
+
+
+-- API call returns an object. This function decodes the object accessing the results list
+
+
+apiDecodeList : Json.Decoder (List QuizData)
+apiDecodeList =
+    Json.at [ "results" ] <|
+        Json.list apiDecoder
+
+
+
+-- Decoding the individual quiz Q&As records from the API call, located inside the results list
+
+
+apiDecoder : Json.Decoder QuizData
+apiDecoder =
+    Json.map3
+        QuizData
+        (Json.at [ "question" ] Json.string)
+        (Json.at [ "correct_answer" ] Json.string)
+        (Json.at [ "incorrect_answers" ] (Json.list Json.string))
+
 
 
 -- function to switch between pages
@@ -86,10 +151,10 @@ changePage model =
     case model.view of
         StartPage ->
             section []
-                [ input [ placeholder "Enter your name" ]
+                [ input [ placeholder "Enter your name", onInput Username ]
                     []
                 , button
-                    []
+                    [ onClick GetApiData ]
                     [ text "Play" ]
                 ]
 
@@ -111,7 +176,7 @@ changePage model =
 view : Model -> Html Msg
 view model =
     div []
-        [ header []
+        [ Html.header []
             [ h1 [] [ text "ElmQuiz" ]
             ]
         , (changePage model)
