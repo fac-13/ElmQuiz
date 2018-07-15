@@ -19,7 +19,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, Cmd.none )
+    ( initModel, sendHttpRequest )
 
 
 
@@ -51,9 +51,9 @@ type alias QuizData =
 type Msg
     = Username String
     | Score Int
-    | UpdatePage
     | GetApiData
     | ApiResponse (Result Http.Error (List QuizData))
+    | StartGame
 
 
 initModel : Model
@@ -84,9 +84,6 @@ update msg model =
         Score score ->
             ( { model | score = score }, Cmd.none )
 
-        UpdatePage ->
-            ( { model | view = QuestionPage }, Cmd.none )
-
         GetApiData ->
             ( model, sendHttpRequest )
 
@@ -103,6 +100,9 @@ update msg model =
                     Debug.log "Quiz api error:" err
             in
                 ( { model | error = True }, Cmd.none )
+
+        StartGame ->
+            ( { model | view = QuestionPage }, Cmd.none )
 
 
 sendHttpRequest : Cmd Msg
@@ -154,13 +154,15 @@ changePage model =
                 [ input [ placeholder "Enter your name", onInput Username ]
                     []
                 , button
-                    [ onClick GetApiData ]
+                    [ onClick StartGame ]
                     [ text "Play" ]
                 ]
 
         QuestionPage ->
             section []
-                [ p [] [ text "This is the question page" ]
+                [ p []
+                    [ text "This is the question page" ]
+                , (model.quizData [ 1 ])
                 ]
 
         GameOverPage ->

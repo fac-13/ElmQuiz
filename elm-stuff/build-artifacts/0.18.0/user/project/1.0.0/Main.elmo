@@ -1,6 +1,137 @@
+var _user$project$Main$Model = F5(
+	function (a, b, c, d, e) {
+		return {score: a, username: b, view: c, quizData: d, error: e};
+	});
+var _user$project$Main$QuizData = F3(
+	function (a, b, c) {
+		return {question: a, correct_answer: b, incorrect_answers: c};
+	});
+var _user$project$Main$apiDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$Main$QuizData,
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'question',
+			_1: {ctor: '[]'}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'correct_answer',
+			_1: {ctor: '[]'}
+		},
+		_elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		{
+			ctor: '::',
+			_0: 'incorrect_answers',
+			_1: {ctor: '[]'}
+		},
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+var _user$project$Main$apiDecodeList = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'results',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$list(_user$project$Main$apiDecoder));
+var _user$project$Main$getRequest = function () {
+	var url = 'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple';
+	return A2(_elm_lang$http$Http$get, url, _user$project$Main$apiDecodeList);
+}();
+var _user$project$Main$GameOverPage = {ctor: 'GameOverPage'};
+var _user$project$Main$QuestionPage = {ctor: 'QuestionPage'};
+var _user$project$Main$StartPage = {ctor: 'StartPage'};
+var _user$project$Main$initModel = {
+	score: 0,
+	username: '',
+	view: _user$project$Main$StartPage,
+	quizData: {
+		ctor: '::',
+		_0: {
+			question: '',
+			correct_answer: '',
+			incorrect_answers: {ctor: '[]'}
+		},
+		_1: {ctor: '[]'}
+	},
+	error: false
+};
+var _user$project$Main$StartGame = {ctor: 'StartGame'};
+var _user$project$Main$ApiResponse = function (a) {
+	return {ctor: 'ApiResponse', _0: a};
+};
+var _user$project$Main$sendHttpRequest = A2(_elm_lang$http$Http$send, _user$project$Main$ApiResponse, _user$project$Main$getRequest);
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _user$project$Main$sendHttpRequest};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'Username':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{username: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Score':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{score: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'GetApiData':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$sendHttpRequest};
+			case 'ApiResponse':
+				if (_p0._0.ctor === 'Ok') {
+					var _p1 = _p0._0._0;
+					var log = A2(_elm_lang$core$Debug$log, 'Quiz api data: ', _p1);
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{quizData: _p1}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					var log = A2(_elm_lang$core$Debug$log, 'Quiz api error:', _p0._0._0);
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{error: true}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{view: _user$project$Main$QuestionPage}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Main$GetApiData = {ctor: 'GetApiData'};
+var _user$project$Main$Score = function (a) {
+	return {ctor: 'Score', _0: a};
+};
+var _user$project$Main$Username = function (a) {
+	return {ctor: 'Username', _0: a};
+};
 var _user$project$Main$changePage = function (model) {
-	var _p0 = model.view;
-	switch (_p0.ctor) {
+	var _p2 = model.view;
+	switch (_p2.ctor) {
 		case 'StartPage':
 			return A2(
 				_elm_lang$html$Html$section,
@@ -12,14 +143,22 @@ var _user$project$Main$changePage = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$placeholder('Enter your name'),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$Username),
+								_1: {ctor: '[]'}
+							}
 						},
 						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$button,
-							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$StartGame),
+								_1: {ctor: '[]'}
+							},
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text('Play'),
@@ -90,67 +229,12 @@ var _user$project$Main$view = function (model) {
 			}
 		});
 };
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {score: a, username: b, view: c, quizData: d};
-	});
-var _user$project$Main$ApiResponse = F3(
-	function (a, b, c) {
-		return {question: a, correct_answer: b, options: c};
-	});
-var _user$project$Main$GameOverPage = {ctor: 'GameOverPage'};
-var _user$project$Main$QuestionPage = {ctor: 'QuestionPage'};
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
-			case 'Username':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{username: _p1._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Score':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{score: _p1._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{view: _user$project$Main$QuestionPage}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-var _user$project$Main$StartPage = {ctor: 'StartPage'};
-var _user$project$Main$initModel = {
-	score: 0,
-	username: '',
-	view: _user$project$Main$StartPage,
-	quizData: {ctor: '[]'}
-};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$Main$init,
 		update: _user$project$Main$update,
 		view: _user$project$Main$view,
-		subscriptions: function (_p2) {
+		subscriptions: function (_p3) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
-var _user$project$Main$UpdatePage = {ctor: 'UpdatePage'};
-var _user$project$Main$Score = function (a) {
-	return {ctor: 'Score', _0: a};
-};
-var _user$project$Main$Username = function (a) {
-	return {ctor: 'Username', _0: a};
-};
